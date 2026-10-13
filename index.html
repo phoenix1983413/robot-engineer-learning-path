@@ -30,8 +30,50 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.8;
-            display: flex;
             min-height: 100vh;
+        }
+
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            padding: 0 16px;
+            z-index: 101;
+            justify-content: space-between;
+        }
+
+        .mobile-header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .menu-toggle {
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
         }
 
         .sidebar {
@@ -45,6 +87,7 @@
             overflow-y: auto;
             padding: 20px 0;
             z-index: 100;
+            transition: transform 0.3s ease;
         }
 
         .sidebar-header {
@@ -348,21 +391,95 @@
         }
 
         @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
             .sidebar {
                 transform: translateX(-100%);
             }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
             .main-content {
                 margin-left: 0;
-                padding: 20px;
+                padding: 72px 20px 40px;
+                max-width: 100%;
             }
+
+            .hero {
+                padding: 40px 16px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .module-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .module-title {
+                font-size: 20px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
             .knowledge-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .knowledge-item h4 {
+                font-size: 15px;
+            }
+
+            .knowledge-item p {
+                font-size: 14px;
+            }
+
+            .path-steps {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .path-arrow {
+                text-align: center;
+                transform: rotate(90deg);
+            }
+
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
-    <nav class="sidebar">
+    <div class="mobile-header">
+        <span class="mobile-header-title">📚 机器人工程师学习路径</span>
+        <button class="menu-toggle" id="menuToggle" aria-label="打开目录">☰</button>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h1>📚 机器人工程师学习路径</h1>
             <p>从入门到精通的完整知识体系</p>
@@ -1275,6 +1392,42 @@
     <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 
     <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('open');
+            menuToggle.setAttribute('aria-label', '关闭目录');
+            menuToggle.textContent = '✕';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+            menuToggle.setAttribute('aria-label', '打开目录');
+            menuToggle.textContent = '☰';
+        }
+
+        menuToggle.addEventListener('click', () => {
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            });
+        });
+
         // Back to top button
         const backToTop = document.getElementById('backToTop');
         window.addEventListener('scroll', () => {
