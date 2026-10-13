@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机器人工程师学习路径 - 从入门到精通</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #79b8ff;
+            --border: #30363d;
+            --success: #238636;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .toc {
+            list-style: none;
+            padding: 0 10px;
+        }
+
+        .toc-item {
+            margin-bottom: 2px;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .toc-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .toc-link.active {
+            background: var(--bg-tertiary);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+        }
+
+        .toc-sub {
+            padding-left: 20px;
+            font-size: 13px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 900px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1a2332 0%, #0d1117 100%);
+            border-radius: 12px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #58a6ff, #bc8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .hero-meta {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .module {
+            margin-bottom: 60px;
+            scroll-margin-top: 40px;
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .module-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #58a6ff, #bc8cff);
+            color: white;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .module-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .module-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            margin-right: 12px;
+            border-radius: 2px;
+        }
+
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .knowledge-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .knowledge-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .knowledge-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .knowledge-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .tag.important {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tag.advanced {
+            background: rgba(210, 153, 34, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .learning-path {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .learning-path h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .path-steps {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .path-step {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .path-arrow {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .tip-box {
+            background: rgba(88, 166, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 24px 0;
+        }
+
+        .tip-box h4 {
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .tip-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .knowledge-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h1>📚 机器人工程师学习路径</h1>
+            <p>从入门到精通的完整知识体系</p>
+        </div>
+        <ul class="toc">
+            <li class="toc-item"><a href="#cover" class="toc-link">封面</a></li>
+            <li class="toc-item"><a href="#module-01" class="toc-link">01 软硬件基础</a></li>
+            <li class="toc-item"><a href="#module-02" class="toc-link">02 单片机核心</a></li>
+            <li class="toc-item"><a href="#module-03" class="toc-link">03 机器人动力与底盘</a></li>
+            <li class="toc-item"><a href="#module-04" class="toc-link">04 上位机开发</a></li>
+            <li class="toc-item"><a href="#module-05" class="toc-link">05 语音对话系统</a></li>
+            <li class="toc-item"><a href="#module-06" class="toc-link">06 ROS2 核心</a></li>
+            <li class="toc-item"><a href="#module-07" class="toc-link">07 多机器人实战</a></li>
+            <li class="toc-item"><a href="#module-08" class="toc-link">08 端侧模型部署</a></li>
+            <li class="toc-item"><a href="#module-09" class="toc-link">09 云端模型部署</a></li>
+            <li class="toc-item"><a href="#appendix" class="toc-link">附录：学习路线图</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section id="cover" class="hero">
+            <h1>机器人工程师学习路径</h1>
+            <p>系统化掌握机器人开发全栈技术，从底层硬件到云端AI，从单机控制到多机协同</p>
+            <div class="hero-meta">
+                <p>版本：v1.0 | 更新日期：2025年 | 适用人群： aspiring 机器人工程师、自动化专业学生、跨领域技术转型者</p>
+            </div>
+        </section>
+
+        <!-- Module 01 -->
+        <section id="module-01" class="module">
+            <div class="module-header">
+                <div class="module-number">01</div>
+                <div>
+                    <div class="module-title">软硬件基础</div>
+                    <div class="module-subtitle">计算机科学基础 + 电子电路入门 + 机械制图识图</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">软件基础</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>编程语言基础</h4>
+                        <p>C/C++（底层开发）、Python（快速原型/脚本）、Linux 命令行与 Shell 脚本</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>数据结构与算法</h4>
+                        <p>数组、链表、栈、队列、树、图；排序与搜索；时间/空间复杂度分析</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>操作系统</h4>
+                        <p>进程/线程、内存管理、文件系统、中断机制；Linux 内核基础与驱动概念</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>计算机网络</h4>
+                        <p>TCP/IP 协议栈、Socket 编程、HTTP/MQTT、串口通信（UART/RS485/CAN）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>版本控制与协作</h4>
+                        <p>Git 工作流、GitHub/GitLab、代码审查、文档编写（Markdown/Doxygen）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>嵌入式软件基础</h4>
+                        <p>RTOS 概念（FreeRTOS/RT-Thread）、中断服务例程、看门狗、低功耗设计</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">硬件基础</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>电路理论</h4>
+                        <p>欧姆定律、基尔霍夫定律、电阻/电容/电感特性、滤波电路、电源管理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>模拟与数字电路</h4>
+                        <p>放大器、ADC/DAC、逻辑门、触发器、总线（I2C/SPI/UART）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>电源设计</h4>
+                        <p>线性稳压器 vs 开关电源、电池类型（LiPo/LiFePO4）、充放电管理、BMS 概念</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>传感器与执行器</h4>
+                        <p>IMU（加速度计/陀螺仪）、编码器、电机驱动（H桥）、舵机控制原理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>焊接与调试</h4>
+                        <p>示波器/万用表/逻辑分析仪使用、焊接技术、故障排查方法论</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>机械制图识图</h4>
+                        <p>工程视图（三视图/剖视图）、尺寸标注、公差配合、3D 模型读取（STL/STEP）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 学习建议</h4>
+                <p>此阶段注重"广度优先"。不必深入每个细节，但要建立完整的知识地图。建议通过"面包板+Arduino"或"ESP32开发板"做3-5个硬件实验，建立手感。</p>
+            </div>
+        </section>
+
+        <!-- Module 02 -->
+        <section id="module-02" class="module">
+            <div class="module-header">
+                <div class="module-number">02</div>
+                <div>
+                    <div class="module-title">单片机核心</div>
+                    <div class="module-subtitle">ARM Cortex-M 系列 + 通信协议 + 底层驱动开发</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">核心 MCU 平台</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>ARM Cortex-M 架构</h4>
+                        <p>寄存器模型、中断向量表、NVIC、总线矩阵（AHB/APB）、存储器映射</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>STM32 系列深入</h4>
+                        <p>HAL/LL 库使用、时钟树配置、DMA 传输、定时器（PWM/输入捕获）、ADC/DAC</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>ESP32/ESP32-S3</h4>
+                        <p>WiFi/BLE 通信、低功耗模式、Arduino/ESP-IDF 框架、OTA 升级</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>GD32/国产 MCU</h4>
+                        <p>国产替代趋势、引脚兼容性、开发生态对比</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">通信协议深度掌握</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>UART / USART</h4>
+                        <p>异步通信、波特率计算、DMA 接收、IDLE 中断、FIFO 管理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>I2C 总线</h4>
+                        <p>主从模式、时钟拉伸、多设备寻址、软件/硬件 I2C、常见问题排查</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>SPI 总线</h4>
+                        <p>主从通信、模式 0-3、DMA 双缓冲、Flash 读写、高速 SPI</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>CAN / CAN FD</h4>
+                        <p>总线仲裁、报文格式、滤波器配置、SocketCAN（Linux）、汽车网络基础</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">嵌入式系统核心技能</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>调试技术</h4>
+                        <p>J-Link/ST-Link 使用、SWD/JTAG、断点调试、变量监视、实时跟踪（ETM）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>Bootloader</h4>
+                        <p>IAP 原理、安全启动、Flash 分区布局、YModem/HTTP OTA 实现</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>低功耗设计</h4>
+                        <p>Sleep/Stop/Standby 模式、RTC 唤醒、外设时钟门控、功耗测量方法</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>实时性保证</h4>
+                        <p>中断优先级配置、抢占式调度、临界区保护、看门狗策略</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="learning-path">
+                <h3>🎯 本阶段实战项目</h3>
+                <div class="path-steps">
+                    <span class="path-step">智能温控器</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-step">多传感器数据采集站</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-step">CAN 总线通信节点</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-step">OTA 升级模块</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 03 -->
+        <section id="module-03" class="module">
+            <div class="module-header">
+                <div class="module-number">03</div>
+                <div>
+                    <div class="module-title">机器人动力与底盘系统</div>
+                    <div class="module-subtitle">传感器融合、定位导航、SLAM 建图、运动控制</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">感知传感器</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>IMU 惯性测量单元</h4>
+                        <p>加速度计、陀螺仪、磁力计原理；互补滤波、卡尔曼滤波；传感器融合（Madgwick/Mahony）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>编码器与里程计</h4>
+                        <p>增量式 vs 绝对式编码器、光电/磁电原理、轮式里程计计算、累计误差分析</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>激光雷达 LiDAR</h4>
+                        <p>ToF vs 三角测距、2D/3D LiDAR 原理、点云格式（PCL）、RPLIDAR/YDLiDAR 系列</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>深度相机</h4>
+                        <p>结构光（RealSense）、双目视觉、ToF 相机；点云配准；RGB-D 数据用途</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>超声波/红外传感器</h4>
+                        <p>测距原理、阵列布置、滤波去噪、与激光雷达的融合策略</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">定位与建图</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>SLAM 基础理论</h4>
+                        <p>前端里程计、后端优化、闭环检测；图优化（g2o/gtsam）、BA  bundle adjustment</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>激光 SLAM</h4>
+                        <p>Cartographer、Gmapping、Hector SLAM、LOAM 系列；2D vs 3D；适应场景对比</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>视觉 SLAM</h4>
+                        <p>ORB-SLAM、VINS-Fusion；特征点法 vs 直接法；稀疏 vs 半稠密 vs 稠密</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>融合定位</h4>
+                        <p>EKF（扩展卡尔曼滤波）、图优化融合；激光+IMU+轮速计融合方案</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">运动底盘控制</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>底盘运动学</h4>
+                        <p>差速驱动、全向轮（Mecanum/Omni）、阿克曼转向；运动学正解/逆解</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>电机控制</h4>
+                        <p>直流有刷/无刷电机（BLDC）、舵机、步进电机；PID 控制、速度/位置环</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>导航与路径规划</h4>
+                        <p>全局路径（A*/Dijkstra）、局部路径（DWA/TEB）、动态障碍物避障、代价地图</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>导航栈实战</h4>
+                        <p>ROS2 Navigation Stack（Nav2）、Costmap、Planner、Controller 配置与调参</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 04 -->
+        <section id="module-04" class="module">
+            <div class="module-header">
+                <div class="module-number">04</div>
+                <div>
+                    <div class="module-title">机器人上位机开发</div>
+                    <div class="module-subtitle">Python & Java 后端 + 软硬件综合实战 + 通信中间件</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Python 上位机开发</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>Python 核心进阶</h4>
+                        <p>异步编程（asyncio）、多线程/多进程、类型提示、性能优化（cProfile）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>ROS2 Python 开发</h4>
+                        <p>rclpy 节点开发、自定义消息/服务、Action、生命周期节点、参数管理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>Web 后端框架</h4>
+                        <p>FastAPI（推荐）、Flask/Django；RESTful API 设计、WebSocket 实时通信、CORS</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>数据处理与可视化</h4>
+                        <p>NumPy/Pandas、Matplotlib/Plotly；ROS2 bag 解析与可视化（Foxglove/Webviz）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Java 上位机开发</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>Java 企业级基础</h4>
+                        <p>Java 17+ 新特性、Spring Boot 3.x、Spring Cloud Alibaba、依赖注入与 AOP</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>高并发与消息队列</h4>
+                        <p>RabbitMQ/Kafka 使用场景、消息可靠性、流量控制、熔断降级（Sentinel）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>微服务架构</h4>
+                        <p>Nacos 注册中心、Gateway、分布式链路追踪、容器化部署（Docker/K8s）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>机器人业务系统</h4>
+                        <p>任务调度系统、设备管理平台、日志收集（ELK）、监控告警（Prometheus/Grafana）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">软硬件综合实战</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>通信中间件</h4>
+                        <p>MQTT（EMQX）、gRPC、ZeroMQ；发布/订阅模式、服务质量（QoS）选型</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>串口/网络通信</h4>
+                        <p>PySerial、Socket 编程、Modbus 协议、自定义二进制协议设计</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>数据采集与存储</h4>
+                        <p>时序数据库（InfluxDB/TimescaleDB）、消息队列缓冲、数据管道设计</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>系统集成</h4>
+                        <p>Docker Compose 编排、跨平台部署、日志聚合、远程调试与运维</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 技术选型建议</h4>
+                <p>Python 适合快速原型、算法验证、脚本工具；Java 适合高可靠、高并发的企业级后台系统。建议两者兼备，根据场景选择。上位机开发的核心是"稳定可靠的通信 + 清晰的数据流 + 可维护的架构"。</p>
+            </div>
+        </section>
+
+        <!-- Module 05 -->
+        <section id="module-05" class="module">
+            <div class="module-header">
+                <div class="module-number">05</div>
+                <div>
+                    <div class="module-title">机器人语音对话系统</div>
+                    <div class="module-subtitle">ASR / TTS / 语音识别 / 语义理解 / 多轮对话</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">语音信号处理基础</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>声学基础</h4>
+                        <p>声音的数字化（采样率/位深/量化）、音频格式（WAV/MP3/FLAC）、预加重/分帧/加窗</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>特征提取</h4>
+                        <p>MFCC、Fbank、Spectrogram；梅尔滤波器组、语谱图可视化</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>语音活动检测（VAD）</h4>
+                        <p>能量检测、WebRTC VAD、Silero VAD；端点检测与静音切除</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>降噪与增强</h4>
+                        <p>噪声抑制（NS）、声学回音消除（AEC）、波束形成（麦克风阵列）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">ASR 自动语音识别</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>传统 ASR</h4>
+                        <p>HMM-GMM 框架、WFST 解码图、语言模型（N-gram）、发音词典</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>深度学习 ASR</h4>
+                        <p>端到端模型（DeepSpeech2/Conformer）、CTC/Attention 解码、流式识别 vs 离线识别</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>开源工具链</h4>
+                        <p>Whisper（OpenAI）、FunASR（阿里）、Vosk；本地部署与性能优化</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>唤醒词引擎</h4>
+                        <p>Porcupine（Picovoice）、Snowboy、自定义唤醒词训练、低功耗唤醒方案</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">TTS 语音合成</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>传统 TTS</h4>
+                        <p>拼接式 TTS、参数合成（HTS）、韵律生成（时长/F0/谱参数）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>神经 TTS</h4>
+                        <p>Tacotron2、FastSpeech、VITS；端到端合成；音色克隆与情感控制</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>开源方案</h4>
+                        <p>Piper（轻量级）、Coqui TTS、Edge-TTS；部署优化与延迟控制</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">自然语言理解与对话</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>意图识别</h4>
+                        <p>文本分类、少样本/零样本分类（OpenAI Function Calling）、领域适配</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>实体抽取</h4>
+                        <p>NER（命名实体识别）、正则匹配、槽位填充（Slot Filling）、对话状态跟踪（DST）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>大模型对话</h4>
+                        <p>Prompt Engineering、RAG（检索增强生成）、Function Calling、上下文管理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>对话管理</h4>
+                        <p>有限状态机（FSM）、基于规则 vs 基于学习、多轮上下文维护、异常处理</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 06 -->
+        <section id="module-06" class="module">
+            <div class="module-header">
+                <div class="module-number">06</div>
+                <div>
+                    <div class="module-title">机器人核心技术栈</div>
+                    <div class="module-subtitle">ROS2 / 仿真 / 建模 / 感知 / 导航 / 控制 / 结构 / 电子 / 固件 / 算法</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">ROS2 系统 mastery</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>ROS2 架构</h4>
+                        <p>DDS 通信层、节点（Node）、话题/服务/动作、参数服务器、生命周期管理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>ROS2 工具链</h4>
+                        <p>colcon 构建、ament 包管理、launch 文件（Python/XML）、ros2 bag 录制与回放</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>自定义消息与接口</h4>
+                        <p>.msg/.srv/.action 定义、IDL 生成、多语言客户端（C++/Python）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>ROS2 高级特性</h4>
+                        <p>组件容器（Component）、进程内/间通信、QoS 策略详解、安全性与权限</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">仿真与建模</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>物理仿真器</h4>
+                        <p>Gazebo Classic / Gazebo Harmonic、Ignition、物理引擎（ODE/Bullet/PhysX）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>URDF 建模</h4>
+                        <p>机器人描述文件（URDF/SDF）、关节类型、传感器配置、xacro 宏定义</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>仿真环境搭建</h4>
+                        <p>世界文件（.world）、地形生成、光照/材质、传感器插件（激光雷达/相机）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>数字孪生基础</h4>
+                        <p>Unity/Unreal 与 ROS2 桥接、仿真到实物的映射、场景编辑器</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">感知、导航与控制</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>计算机视觉</h4>
+                        <p>OpenCV 基础、目标检测（YOLO）、语义分割、AprilTag/ArUco 标记识别</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>3D 感知</h4>
+                        <p>PCL 点云库、点云滤波/分割/聚类、3D 目标检测（PointPillars/VoxelNet）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>导航系统</h4>
+                        <p>Nav2 架构深度解析、Costmap 图层、Planner（Smac Planner）、Controller（MPPI）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>运动控制</h4>
+                        <p>轨迹生成、时间参数化（Toppra）、力矩控制、 whole-body control 概念</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">结构、电子与固件</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>机械结构设计</h4>
+                        <p>SolidWorks/Fusion 360 基础、运动仿真、有限元分析（FEA）入门、公差设计</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>电子电路设计</h4>
+                        <p>Altium Designer/KiCad、原理图设计、PCB 布局布线、EMC/EMI 基础</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>固件开发</h4>
+                        <p>STM32 HAL/LL 库、RT-Thread/FreeRTOS、CANopen/DS301 协议栈、bootloader</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>硬件在环（HIL）</h4>
+                        <p>Simulink + 实时机、硬件仿真接口、控制器测试方法</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">算法与控制理论</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>控制理论</h4>
+                        <p>PID 调参深入、状态空间模型、LQR/LQG、模型预测控制（MPC）基础</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>滤波与估计</h4>
+                        <p>卡尔曼滤波（KF/EKF/UKF）、粒子滤波、因子图优化、g2o/gtsam 使用</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>路径规划算法</h4>
+                        <p>采样算法（RRT/RRT*）、优化方法（CHOMP/STOMP）、组合导航融合</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>深度学习在机器人的应用</h4>
+                        <p>端到端导航、强化学习控制、Sim2Real 迁移学习基础</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 07 -->
+        <section id="module-07" class="module">
+            <div class="module-header">
+                <div class="module-number">07</div>
+                <div>
+                    <div class="module-title">多机器人整机项目实战</div>
+                    <div class="module-subtitle">从单机到集群、从原型到产品、多机协同与系统集成</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">单机完整产品化</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>需求分析与系统设计</h4>
+                        <p>需求拆解（功能/性能/环境）、架构图绘制、接口定义、技术选型文档</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>机械结构集成</h4>
+                        <p>整机装配、线缆管理、维护口设计、重量/重心计算、IP 防护等级</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>电气系统集成</h4>
+                        <p>电源树设计、保险丝/继电器保护、接地策略、EMC 整改、线束图绘制</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>系统联调</h4>
+                        <p>模块单元测试、集成测试、压力测试、边界条件验证、Bug 追踪流程</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">多机协同系统</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>多机通信架构</h4>
+                        <p>中心化 vs 去中心化、ROS2 多机器人通信（命名空间/话题隔离）、MAVROS/DroneKit</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>协同定位与建图</h4>
+                        <p>多机器人 SLAM（CI-Graph SLAM）、分布式地图合并、共享代价地图</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>任务分配与调度</h4>
+                        <p>集中式任务分配（匈牙利算法）、分布式拍卖算法、时空冲突检测</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>编队控制</h4>
+                        <p>领航-跟随、虚拟结构、基于行为的编队；避障与队形保持</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">典型整机项目实战</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>项目一：安防巡逻机器人</h4>
+                        <p>底盘设计、激光 SLAM 导航、热成像/可见光巡检、自动充电、远程监控平台</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>项目二：配送机器人</h4>
+                        <p>电梯对接、多楼层导航、货柜对接、用户交互屏、云端调度系统</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>项目三：人形机器人</h4>
+                        <p>仿生结构设计、全身运动规划、步态控制、人机交互、具身智能基础</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>项目四：多机集群系统</h4>
+                        <p>3-5 台机器人协同、区域覆盖算法、中心调度平台、仿真验证环境</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 项目实战方法论</h4>
+                <p>建议采用"螺旋式开发"：先做最小可用原型（MVP），验证核心功能，再迭代优化。每个项目结束后，必须产出：架构设计文档、接口文档、测试报告、部署手册。这些文档是工程师能力的重要证明。</p>
+            </div>
+        </section>
+
+        <!-- Module 08 -->
+        <section id="module-08" class="module">
+            <div class="module-header">
+                <div class="module-number">08</div>
+                <div>
+                    <div class="module-title">端侧模型部署与具身机器人二次开发</div>
+                    <div class="module-subtitle">模型压缩 / 边缘推理 / 硬件加速 / 具身智能</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">模型压缩与优化</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>量化</h4>
+                        <p>INT8/INT4 量化、量化感知训练（QAT）、训练后量化（PTQ）、精度损失评估</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>剪枝</h4>
+                        <p>结构化 vs 非结构化剪枝、通道剪枝、稀疏训练、硬件感知剪枝</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>知识蒸馏</h4>
+                        <p>教师-学生模型、响应蒸馏、特征蒸馏、多教师蒸馏</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>轻量级架构</h4>
+                        <p>MobileNet、ShuffleNet、EfficientNet-Lite；参数量/FLOPs 分析</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">边缘推理框架</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>ONNX Runtime</h4>
+                        <p>模型转换（ONNX）、执行提供程序（CPU/CUDA/TensorRT/OpenVINO）、性能调优</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>TensorRT</h4>
+                        <p>FP16/INT8 加速、层融合、动态形状、引擎序列化、精度校准</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>NCNN / MNN / TNN</h4>
+                        <p>移动端部署框架对比、ARM NEON 优化、 Vulkan/Metal 后端</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>OpenVINO</h4>
+                        <p>Intel 硬件优化、模型优化器、推理引擎、IE 插件架构</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">端侧硬件平台</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>边缘计算盒子</h4>
+                        <p>NVIDIA Jetson（Nano/Orin）、RK3588、瑞芯微系列；性能对比与选型</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>MCU 侧推理</h4>
+                        <p>STM32 + CMSIS-NN、ESP32-S3 神经网络推理、微控制器 AI 框架</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>硬件加速器</h4>
+                        <p>TPU（Coral Edge）、NPU（瑞芯微/晶晨）、FPGA 推理（Vitis AI）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>性能基准测试</h4>
+                        <p>FPS/延迟/功耗测量、Profiling 工具（NVIDIA Nsight）、端到端延迟优化</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">具身机器人二次开发</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>具身智能基础</h4>
+                        <p>Embodied AI 概念、Sim2Real  gap、世界模型（World Model）、具身推理</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>机器人基础模型</h4>
+                        <p>RT-1/RT-2（Google）、PaLM-E、RoboCat；模型架构与任务表示</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>技能学习与泛化</h4>
+                        <p>模仿学习（Imitation Learning）、强化学习（RL）、few-shot 技能迁移</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>仿真到实物的迁移</h4>
+                        <p>领域随机化（Domain Randomization）、系统辨识、仿真校准、在线微调</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 09 -->
+        <section id="module-09" class="module">
+            <div class="module-header">
+                <div class="module-number">09</div>
+                <div>
+                    <div class="module-title">云端模型部署与微调</div>
+                    <div class="module-subtitle">模型服务化 / 云端推理 / 微调训练 / 多端协同</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">大模型基础与微调</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>Transformer 架构</h4>
+                        <p>Self-Attention、Multi-Head Attention、Positional Encoding、Layer Normalization</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>大模型训练范式</h4>
+                        <p>预训练（PT）、监督微调（SFT）、RLHF、DPO；数据飞轮与迭代策略</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>参数高效微调</h4>
+                        <p>LoRA/QLoRA、P-Tuning v2、Prefix Tuning、Adapter；全量微调 vs PEFT 对比</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>领域适配</h4>
+                        <p>机器人领域语料构建、指令数据格式设计、安全对齐（Safety Alignment）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">模型服务化部署</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>推理框架</h4>
+                        <p>vLLM、TGI（Text Generation Inference）、TensorRT-LLM、llama.cpp；吞吐量/延迟优化</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>模型服务</h4>
+                        <p>FastAPI/OpenAI API 兼容、流式输出（SSE/WebSocket）、并发控制、负载均衡</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>资源调度</h4>
+                        <p>GPU 显存管理、KV-Cache 优化、连续批处理（Continuous Batching）、多模型共享</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>可观测性</h4>
+                        <p>Prometheus 指标采集、请求追踪（Jaeger）、日志分析、成本监控</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">模型对接与多端协同</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>API 设计</h4>
+                        <p>OpenAI API 兼容、Function Calling、多模态输入（文本/图像/语音）、流式协议</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>RAG 增强</h4>
+                        <p>向量数据库（Pinecone/Milvus/Qdrant）、嵌入模型、分块策略、检索排序</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>Agent 架构</h4>
+                        <p>ReAct 框架、工具调用（Tool Use）、规划器（Planner）、记忆系统（Memory）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>边云协同</h4>
+                        <p>端侧轻量模型 + 云端大模型协同、任务卸载策略、隐私计算（联邦学习基础）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">工程化与运维</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>CI/CD 流水线</h4>
+                        <p>模型版本管理（MLflow/DVC）、自动化测试、蓝绿部署、回滚策略</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>安全与合规</h4>
+                        <p>Prompt 注入防御、输出过滤、访问控制、数据脱敏、审计日志</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>成本优化</h4>
+                        <p>模型量化、请求批处理、冷热模型分层、Spot Instance 使用、成本分析</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Appendix -->
+        <section id="appendix" class="module">
+            <div class="module-header">
+                <div class="module-number">📊</div>
+                <div>
+                    <div class="module-title">附录：学习路线图</div>
+                    <div class="module-subtitle">9 大模块的学习顺序与时间建议</div>
+                </div>
+            </div>
+
+            <div class="learning-path">
+                <h3>🎯 推荐学习路径（总周期：18-24 个月）</h3>
+                <div class="path-steps" style="flex-direction: column; align-items: stretch; gap: 12px;">
+                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #58a6ff;">
+                        <strong style="color: #58a6ff;">第一阶段（0-6 个月）：基础筑基</strong>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                            模块 01（软硬件基础）+ 模块 02（单片机核心）<br>
+                            目标：能独立设计简单的嵌入式系统，掌握常用通信协议
+                        </p>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #bc8cff;">
+                        <strong style="color: #bc8cff;">第二阶段（6-12 个月）：机器人核心</strong>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                            模块 03（动力底盘）+ 模块 06（ROS2 核心）<br>
+                            目标：能开发完整的单机器人导航与控制系统
+                        </p>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #3fb950;">
+                        <strong style="color: #3fb950;">第三阶段（12-18 个月）：应用与集成</strong>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                            模块 04（上位机开发）+ 模块 05（语音对话）+ 模块 07（多机实战）<br>
+                            目标：能交付完整的机器人产品级系统
+                        </p>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #f85149;">
+                        <strong style="color: #f85149;">第四阶段（18-24 个月）：智能化进阶</strong>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                            模块 08（端侧部署）+ 模块 09（云端部署）<br>
+                            目标：具备具身智能与云边端协同开发能力
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box" style="margin-top: 32px;">
+                <h4>📌 学习建议</h4>
+                <p>1. 每个模块学完后，至少完成 2-3 个实战项目<br>
+                2. 建立个人技术博客/GitHub，记录学习过程<br>
+                3. 参与开源项目（ROS2、Nav2、OpenCV 等），积累实战经验<br>
+                4. 关注顶会（ICRA/IROS/RSS）与行业动态，保持技术敏感度<br>
+                5. 理论与实践比例建议：3:7（30% 时间学习，70% 时间动手做）</p>
+            </div>
+
+            <div class="footer">
+                <p>机器人工程师学习路径 | 持续更新中</p>
+                <p style="margin-top: 8px; font-size: 12px;">Made with ❤️ for Robotics Engineers</p>
+            </div>
+        </section>
+    </main>
+
+    <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
+
+    <script>
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Active TOC highlighting
+        const sections = document.querySelectorAll('.module, .hero');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
