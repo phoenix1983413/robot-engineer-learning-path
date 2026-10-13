@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>机器人工程师学习路径 - 从入门到精通</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
             --bg-primary: #0d1117;
@@ -145,9 +146,46 @@
 
         .main-content {
             margin-left: 280px;
+            margin-right: 400px;
             flex: 1;
             padding: 40px 60px;
-            max-width: 900px;
+            max-width: none;
+        }
+
+        .viz-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 98;
+        }
+
+        .viz-container {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .viz-header {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .viz-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 10px 12px;
+            background: rgba(13, 17, 23, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            backdrop-filter: blur(6px);
         }
 
         .hero {
@@ -388,6 +426,15 @@
 
         .back-to-top.visible {
             opacity: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .viz-panel {
+                display: none;
+            }
+            .main-content {
+                margin-right: 0;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1389,6 +1436,13 @@
         </section>
     </main>
 
+    <aside class="viz-panel" id="vizPanel">
+        <div class="viz-container" id="vizContainer"></div>
+        <div class="viz-header">
+            <div class="viz-title" id="vizTitle">机器人工程师学习路径 - 系统架构总览</div>
+        </div>
+    </aside>
+
     <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 
     <script>
@@ -1470,6 +1524,246 @@
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
+        });
+    </script>
+
+    <script type="module">
+        // Three.js 3D 知识图谱可视化
+        const vizContainer = document.getElementById('vizContainer');
+        const vizTitle = document.getElementById('vizTitle');
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x161b22);
+        scene.fog = new THREE.Fog(0x161b22, 8, 20);
+
+        const camera = new THREE.PerspectiveCamera(50, 400 / 600, 0.1, 100);
+        camera.position.set(0, 0, 9);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(400, 600);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        vizContainer.appendChild(renderer.domElement);
+
+        // 灯光
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0x58a6ff, 1.2, 20);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        const pointLight2 = new THREE.PointLight(0xbc8cff, 0.8, 20);
+        pointLight2.position.set(-5, -3, 3);
+        scene.add(pointLight2);
+
+        // 模块数据
+        const moduleData = [
+            { id: 'cover', title: '封面', color: 0x58a6ff },
+            { id: 'module-01', title: '01 软硬件基础', color: 0x58a6ff },
+            { id: 'module-02', title: '02 单片机核心', color: 0x79b8ff },
+            { id: 'module-03', title: '03 动力与底盘', color: 0x3fb950 },
+            { id: 'module-04', title: '04 上位机开发', color: 0xd29922 },
+            { id: 'module-05', title: '05 语音对话', color: 0xf78166 },
+            { id: 'module-06', title: '06 ROS2 核心', color: 0xbc8cff },
+            { id: 'module-07', title: '07 多机实战', color: 0x3fb950 },
+            { id: 'module-08', title: '08 端侧部署', color: 0xf85149 },
+            { id: 'module-09', title: '09 云端部署', color: 0x58a6ff },
+            { id: 'appendix', title: '附录', color: 0x8b949e },
+        ];
+
+        // 节点容器
+        const nodeGroup = new THREE.Group();
+        scene.add(nodeGroup);
+
+        const nodes = {};
+        const radius = 3.2;
+
+        // 创建中心节点
+        const centerGeo = new THREE.SphereGeometry(0.35, 32, 32);
+        const centerMat = new THREE.MeshStandardMaterial({
+            color: 0x58a6ff,
+            emissive: 0x58a6ff,
+            emissiveIntensity: 0.4,
+            metalness: 0.3,
+            roughness: 0.4,
+        });
+        const centerNode = new THREE.Mesh(centerGeo, centerMat);
+        centerNode.userData = { id: 'center', title: '机器人工程师' };
+        nodeGroup.add(centerNode);
+
+        // 创建文字 sprite
+        function createTextSprite(text, color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = color;
+            ctx.font = 'bold 40px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 256, 64);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(2.5, 0.6, 1);
+            return sprite;
+        }
+
+        // 中心文字
+        const centerText = createTextSprite('机器人工程师', '#c9d1d9');
+        centerText.position.set(0, 0.6, 0);
+        nodeGroup.add(centerText);
+
+        // 创建环绕节点
+        const startIndex = 1; // 从 module-01 开始
+        const totalNodes = moduleData.length - 1; // 排除 cover 和 center
+        const moduleNodes = moduleData.filter(m => m.id !== 'cover');
+
+        moduleNodes.forEach((mod, i) => {
+            const angle = (-Math.PI / 2) + (i / moduleNodes.length) * Math.PI * 2;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+
+            // 节点
+            const geo = new THREE.BoxGeometry(0.45, 0.45, 0.45);
+            const mat = new THREE.MeshStandardMaterial({
+                color: mod.color,
+                emissive: mod.color,
+                emissiveIntensity: 0.2,
+                metalness: 0.3,
+                roughness: 0.5,
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, y, 0);
+            mesh.userData = { id: mod.id, title: mod.title, baseColor: mod.color };
+            nodeGroup.add(mesh);
+            nodes[mod.id] = mesh;
+
+            // 连线到中心
+            const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(x, y, 0),
+            ]);
+            const lineMat = new THREE.LineBasicMaterial({
+                color: 0x30363d,
+                transparent: true,
+                opacity: 0.6,
+            });
+            const line = new THREE.Line(lineGeo, lineMat);
+            nodeGroup.add(line);
+
+            // 节点文字
+            const sprite = createTextSprite(mod.title, '#c9d1d9');
+            sprite.position.set(x, y + 0.55, 0);
+            nodeGroup.add(sprite);
+        });
+
+        // 交互
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredNode = null;
+
+        function onMouseMove(event) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        }
+
+        function onClick(event) {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodeGroup.children);
+            for (const intersect of intersects) {
+                if (intersect.object.userData.id && intersect.object.userData.id !== 'center') {
+                    const target = document.getElementById(intersect.object.userData.id);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+        }
+
+        renderer.domElement.addEventListener('mousemove', onMouseMove);
+        renderer.domElement.addEventListener('click', onClick);
+
+        // 高亮当前模块
+        function highlightModule(moduleId) {
+            Object.keys(nodes).forEach(id => {
+                const node = nodes[id];
+                if (id === moduleId) {
+                    node.material.emissiveIntensity = 0.8;
+                    node.scale.set(1.3, 1.3, 1.3);
+                } else {
+                    node.material.emissiveIntensity = 0.2;
+                    node.scale.set(1, 1, 1);
+                }
+            });
+
+            const mod = moduleData.find(m => m.id === moduleId);
+            if (mod && vizTitle) {
+                vizTitle.textContent = mod.title + ' - 知识图谱';
+            }
+        }
+
+        // 滚动监听
+        const sections = document.querySelectorAll('.module, .hero');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let currentId = 'cover';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    currentId = section.getAttribute('id');
+                }
+            });
+            highlightModule(currentId);
+        });
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 缓慢旋转
+            nodeGroup.rotation.z += 0.002;
+
+            // 悬停检测
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodeGroup.children);
+            let found = null;
+            for (const intersect of intersects) {
+                if (intersect.object.userData.id && intersect.object.userData.id !== 'center') {
+                    found = intersect.object.userData.id;
+                    break;
+                }
+            }
+
+            if (found !== hoveredNode) {
+                if (hoveredNode && nodes[hoveredNode]) {
+                    nodes[hoveredNode].scale.set(1, 1, 1);
+                }
+                if (found && nodes[found]) {
+                    nodes[found].scale.set(1.2, 1.2, 1.2);
+                }
+                hoveredNode = found;
+                renderer.domElement.style.cursor = found ? 'pointer' : 'default';
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 响应窗口大小
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1200) {
+                renderer.setSize(400, window.innerHeight);
+                camera.aspect = 400 / window.innerHeight;
+            } else {
+                renderer.setSize(vizContainer.clientWidth, vizContainer.clientHeight);
+                camera.aspect = vizContainer.clientWidth / vizContainer.clientHeight;
+            }
+            camera.updateProjectionMatrix();
         });
     </script>
 </body>
