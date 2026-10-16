@@ -1551,7 +1551,7 @@
     <aside class="viz-panel" id="vizPanel">
         <div class="viz-container" id="vizContainer"></div>
         <div class="viz-header">
-            <div class="viz-title" id="vizTitle">机器人工程师学习路径 - 系统架构总览</div>
+            <div class="viz-title" id="vizTitle">迷你太阳系 3D 交互沙盘</div>
         </div>
     </aside>
 
@@ -1640,244 +1640,401 @@
     </script>
 
     <script type="module">
-        // Three.js 3D 知识图谱可视化
+        // ==================== 迷你太阳系 3D 交互沙盘 ====================
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+        import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
         const vizContainer = document.getElementById('vizContainer');
         const vizTitle = document.getElementById('vizTitle');
 
+        // ---------- 场景初始化 ----------
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x161b22);
-        scene.fog = new THREE.Fog(0x161b22, 8, 20);
+        scene.background = new THREE.Color(0x05070a);
 
-        const camera = new THREE.PerspectiveCamera(50, 400 / 600, 0.1, 100);
-        camera.position.set(0, 0, 9);
+        const camera = new THREE.PerspectiveCamera(50, 400 / 600, 0.1, 1000);
+        camera.position.set(0, 3, 8);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(400, 600);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         vizContainer.appendChild(renderer.domElement);
 
-        // 灯光
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.minDistance = 2;
+        controls.maxDistance = 20;
+
+        // ---------- 光照 ----------
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
         scene.add(ambientLight);
 
-        const pointLight = new THREE.PointLight(0x58a6ff, 1.2, 20);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
+        const sunLight = new THREE.PointLight(0xfff5e0, 2.5, 50);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
 
-        const pointLight2 = new THREE.PointLight(0xbc8cff, 0.8, 20);
-        pointLight2.position.set(-5, -3, 3);
-        scene.add(pointLight2);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight.position.set(5, 3, 5);
+        scene.add(dirLight);
 
-        // 模块数据
-        const moduleData = [
-            { id: 'cover', title: '封面', color: 0x58a6ff },
-            { id: 'module-01', title: '01 软硬件基础', color: 0x58a6ff },
-            { id: 'module-02', title: '02 单片机核心', color: 0x79b8ff },
-            { id: 'module-03', title: '03 动力与底盘', color: 0x3fb950 },
-            { id: 'module-04', title: '04 上位机开发', color: 0xd29922 },
-            { id: 'module-05', title: '05 语音对话', color: 0xf78166 },
-            { id: 'module-06', title: '06 ROS2 核心', color: 0xbc8cff },
-            { id: 'module-07', title: '07 多机实战', color: 0x3fb950 },
-            { id: 'module-08', title: '08 端侧部署', color: 0xf85149 },
-            { id: 'module-09', title: '09 云端部署', color: 0x58a6ff },
-            { id: 'module-10', title: '10 综合实战', color: 0xff6b6b },
-            { id: 'appendix', title: '附录', color: 0x8b949e },
+        // ---------- 星空背景 ----------
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 1200;
+        const starsPositions = new Float32Array(starsCount * 3);
+        for (let i = 0; i < starsCount * 3; i += 3) {
+            const r = 40 + Math.random() * 60;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            starsPositions[i] = r * Math.sin(phi) * Math.cos(theta);
+            starsPositions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+            starsPositions[i + 2] = r * Math.cos(phi);
+        }
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.8 });
+        scene.add(new THREE.Points(starsGeometry, starsMaterial));
+
+        // ---------- 太阳 ----------
+        const sunGeometry = new THREE.SphereGeometry(0.6, 48, 48);
+        const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffcc33 });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        scene.add(sun);
+
+        // 太阳光晕
+        const glowGeometry = new THREE.SphereGeometry(0.75, 32, 32);
+        const glowMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.15 });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        scene.add(glow);
+
+        // ---------- 行星数据 ----------
+        const planetsData = [
+            {
+                name: '地球',
+                radius: 0.25,
+                distance: 2.2,
+                speed: 0.35,
+                rotationSpeed: 0.6,
+                texture: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+                info: '地球 | 距离太阳 1 AU | 自转周期 24h | 拥有液态水与生命'
+            },
+            {
+                name: '火星',
+                radius: 0.22,
+                distance: 3.0,
+                speed: 0.25,
+                rotationSpeed: 0.5,
+                texture: 'https://threejs.org/examples/textures/planets/mars_1k_color.jpg',
+                info: '火星 | 距离太阳 1.52 AU | 自转周期 24.6h | 太阳系最可能的殖民目标'
+            },
+            {
+                name: '金星',
+                radius: 0.28,
+                distance: 2.8,
+                speed: 0.18,
+                rotationSpeed: -0.3,
+                texture: 'https://threejs.org/examples/textures/planets/venus_atmos_2048.jpg',
+                info: '金星 | 距离太阳 0.72 AU | 自转周期 -243h | 浓厚大气层，逆向自转'
+            }
         ];
 
-        // 节点容器
-        const nodeGroup = new THREE.Group();
-        scene.add(nodeGroup);
+        const planets = [];
+        const orbits = [];
 
-        const nodes = {};
-        const radius = 3.2;
+        // ---------- 创建行星与轨道 ----------
+        planetsData.forEach((data) => {
+            // 轨道线
+            const orbitGeometry = new THREE.RingGeometry(data.distance - 0.005, data.distance + 0.005, 128);
+            const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
+            const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+            orbit.rotation.x = -Math.PI / 2;
+            scene.add(orbit);
+            orbits.push(orbit);
 
-        // 创建中心节点
-        const centerGeo = new THREE.SphereGeometry(0.35, 32, 32);
-        const centerMat = new THREE.MeshStandardMaterial({
-            color: 0x58a6ff,
-            emissive: 0x58a6ff,
-            emissiveIntensity: 0.4,
-            metalness: 0.3,
-            roughness: 0.4,
-        });
-        const centerNode = new THREE.Mesh(centerGeo, centerMat);
-        centerNode.userData = { id: 'center', title: '机器人工程师' };
-        nodeGroup.add(centerNode);
+            // 行星组（用于公转）
+            const planetGroup = new THREE.Group();
+            scene.add(planetGroup);
 
-        // 创建文字 sprite
-        function createTextSprite(text, color) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 128;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = color;
-            ctx.font = 'bold 40px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(text, 256, 64);
+            // 行星本体
+            const geometry = new THREE.SphereGeometry(data.radius, 48, 48);
+            const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = data.distance;
+            mesh.userData = { name: data.name, info: data.info, baseColor: 0xffffff };
+            planetGroup.add(mesh);
 
-            const texture = new THREE.CanvasTexture(canvas);
-            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
-            const sprite = new THREE.Sprite(material);
-            sprite.scale.set(2.5, 0.6, 1);
-            return sprite;
-        }
-
-        // 中心文字
-        const centerText = createTextSprite('机器人工程师', '#c9d1d9');
-        centerText.position.set(0, 0.6, 0);
-        nodeGroup.add(centerText);
-
-        // 创建环绕节点
-        const startIndex = 1; // 从 module-01 开始
-        const totalNodes = moduleData.length - 1; // 排除 cover 和 center
-        const moduleNodes = moduleData.filter(m => m.id !== 'cover');
-
-        moduleNodes.forEach((mod, i) => {
-            const angle = (-Math.PI / 2) + (i / moduleNodes.length) * Math.PI * 2;
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-
-            // 节点
-            const geo = new THREE.BoxGeometry(0.45, 0.45, 0.45);
-            const mat = new THREE.MeshStandardMaterial({
-                color: mod.color,
-                emissive: mod.color,
-                emissiveIntensity: 0.2,
-                metalness: 0.3,
-                roughness: 0.5,
+            // 加载纹理
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(data.texture, (texture) => {
+                material.map = texture;
+                material.color.set(0xffffff);
+                material.roughness = 0.7;
             });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.set(x, y, 0);
-            mesh.userData = { id: mod.id, title: mod.title, baseColor: mod.color };
-            nodeGroup.add(mesh);
-            nodes[mod.id] = mesh;
 
-            // 连线到中心
-            const lineGeo = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(x, y, 0),
-            ]);
-            const lineMat = new THREE.LineBasicMaterial({
-                color: 0x30363d,
-                transparent: true,
-                opacity: 0.6,
+            planets.push({
+                group: planetGroup,
+                mesh: mesh,
+                data: data,
+                angle: Math.random() * Math.PI * 2
             });
-            const line = new THREE.Line(lineGeo, lineMat);
-            nodeGroup.add(line);
-
-            // 节点文字
-            const sprite = createTextSprite(mod.title, '#c9d1d9');
-            sprite.position.set(x, y + 0.55, 0);
-            nodeGroup.add(sprite);
         });
 
-        // 交互
+        // ---------- UI 控制面板 ----------
+        const vizPanel = document.getElementById('vizPanel');
+        const controlPanel = document.createElement('div');
+        controlPanel.className = 'control-panel';
+        controlPanel.innerHTML = `
+            <div class="panel-title">🪐 太阳系控制台</div>
+            <div class="control-group">
+                <button id="toggleMotion" class="btn">⏸ 暂停运动</button>
+                <button id="resetCamera" class="btn">🔄 重置视角</button>
+            </div>
+            <div class="control-group">
+                <label>选中天体</label>
+                <select id="planetSelect">
+                    <option value="sun">☀️ 太阳</option>
+                    <option value="earth">🌍 地球</option>
+                    <option value="mars">🔴 火星</option>
+                    <option value="venus">🟡 金星</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>地球公转速度 <span id="earthRevValue">1.0x</span></label>
+                <input type="range" id="earthRevSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>地球自转速度 <span id="earthRotValue">1.0x</span></label>
+                <input type="range" id="earthRotSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>火星公转速度 <span id="marsRevValue">1.0x</span></label>
+                <input type="range" id="marsRevSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>火星自转速度 <span id="marsRotValue">1.0x</span></label>
+                <input type="range" id="marsRotSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>金星公转速度 <span id="venusRevValue">1.0x</span></label>
+                <input type="range" id="venusRevSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>金星自转速度 <span id="venusRotValue">1.0x</span></label>
+                <input type="range" id="venusRotSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div id="planetInfo" class="info-box" style="display:none;"></div>
+        `;
+        vizPanel.appendChild(controlPanel);
+
+        // 控制面板样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .control-panel {
+                position: absolute;
+                top: 60px;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                background: rgba(13, 17, 23, 0.9);
+                border: 1px solid #30363d;
+                border-radius: 12px;
+                padding: 16px;
+                overflow-y: auto;
+                z-index: 2;
+                backdrop-filter: blur(8px);
+            }
+            .panel-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: #c9d1d9;
+                margin-bottom: 12px;
+                text-align: center;
+            }
+            .control-group {
+                margin-bottom: 10px;
+            }
+            .control-group label {
+                display: block;
+                font-size: 12px;
+                color: #8b949e;
+                margin-bottom: 4px;
+            }
+            .btn {
+                width: 48%;
+                padding: 8px;
+                background: #21262d;
+                border: 1px solid #30363d;
+                border-radius: 6px;
+                color: #c9d1d9;
+                cursor: pointer;
+                font-size: 12px;
+                margin-right: 4%;
+            }
+            .btn:last-child {
+                margin-right: 0;
+            }
+            .btn:hover {
+                background: #30363d;
+            }
+            select, input[type="range"] {
+                width: 100%;
+                padding: 6px;
+                background: #0d1117;
+                border: 1px solid #30363d;
+                border-radius: 6px;
+                color: #c9d1d9;
+                font-size: 12px;
+            }
+            .info-box {
+                margin-top: 12px;
+                padding: 10px;
+                background: rgba(88, 166, 255, 0.1);
+                border: 1px solid #58a6ff;
+                border-radius: 8px;
+                font-size: 12px;
+                color: #c9d1d9;
+                line-height: 1.5;
+            }
+        `;
+        vizPanel.appendChild(style);
+
+        // ---------- 交互状态 ----------
+        let isRunning = true;
+        const speedMultipliers = {
+            earth: { rev: 1, rot: 1 },
+            mars: { rev: 1, rot: 1 },
+            venus: { rev: 1, rot: 1 }
+        };
+
+        // ---------- UI 事件 ----------
+        const toggleBtn = document.getElementById('toggleMotion');
+        toggleBtn.addEventListener('click', () => {
+            isRunning = !isRunning;
+            toggleBtn.textContent = isRunning ? '⏸ 暂停运动' : '▶ 继续运动';
+        });
+
+        document.getElementById('resetCamera').addEventListener('click', () => {
+            animateCamera(new THREE.Vector3(0, 3, 8), new THREE.Vector3(0, 0, 0));
+        });
+
+        // 下拉菜单选中行星
+        document.getElementById('planetSelect').addEventListener('change', (e) => {
+            const value = e.target.value;
+            if (value === 'sun') {
+                animateCamera(new THREE.Vector3(0, 2, 4), new THREE.Vector3(0, 0, 0));
+            } else {
+                const planet = planets.find(p => p.data.name.toLowerCase() === value);
+                if (planet) {
+                    const pos = new THREE.Vector3();
+                    planet.mesh.getWorldPosition(pos);
+                    animateCamera(pos.clone().add(new THREE.Vector3(1, 0.5, 1)), pos);
+                }
+            }
+        });
+
+        // 速度滑块
+        ['earth', 'mars', 'venus'].forEach(name => {
+            const revSlider = document.getElementById(`${name}RevSpeed`);
+            const rotSlider = document.getElementById(`${name}RotSpeed`);
+            const revValue = document.getElementById(`${name}RevValue`);
+            const rotValue = document.getElementById(`${name}RotValue`);
+
+            revSlider.addEventListener('input', (e) => {
+                speedMultipliers[name].rev = parseFloat(e.target.value);
+                revValue.textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+            });
+            rotSlider.addEventListener('input', (e) => {
+                speedMultipliers[name].rot = parseFloat(e.target.value);
+                rotValue.textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+            });
+        });
+
+        // 点击行星显示信息
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
-        let hoveredNode = null;
+        const infoBox = document.getElementById('planetInfo');
 
-        function onMouseMove(event) {
+        renderer.domElement.addEventListener('click', (event) => {
             const rect = renderer.domElement.getBoundingClientRect();
             mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        }
 
-        function onClick(event) {
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(nodeGroup.children);
-            for (const intersect of intersects) {
-                if (intersect.object.userData.id && intersect.object.userData.id !== 'center') {
-                    const target = document.getElementById(intersect.object.userData.id);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+            const intersects = raycaster.intersectObjects([sun, ...planets.map(p => p.mesh)]);
+
+            if (intersects.length > 0) {
+                const obj = intersects[0].object;
+                if (obj.userData && obj.userData.info) {
+                    infoBox.style.display = 'block';
+                    infoBox.textContent = obj.userData.info;
                 }
+            } else {
+                infoBox.style.display = 'none';
             }
-        }
-
-        renderer.domElement.addEventListener('mousemove', onMouseMove);
-        renderer.domElement.addEventListener('click', onClick);
-
-        // 高亮当前模块
-        function highlightModule(moduleId) {
-            Object.keys(nodes).forEach(id => {
-                const node = nodes[id];
-                if (id === moduleId) {
-                    node.material.emissiveIntensity = 0.8;
-                    node.scale.set(1.3, 1.3, 1.3);
-                } else {
-                    node.material.emissiveIntensity = 0.2;
-                    node.scale.set(1, 1, 1);
-                }
-            });
-
-            const mod = moduleData.find(m => m.id === moduleId);
-            if (mod && vizTitle) {
-                vizTitle.textContent = mod.title + ' - 知识图谱';
-            }
-        }
-
-        // 滚动监听
-        const sections = document.querySelectorAll('.module, .hero');
-        const tocLinks = document.querySelectorAll('.toc-link');
-
-        window.addEventListener('scroll', () => {
-            let currentId = 'cover';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    currentId = section.getAttribute('id');
-                }
-            });
-            highlightModule(currentId);
         });
 
-        // 动画循环
+        // ---------- 相机动画 ----------
+        function animateCamera(targetPos, lookAt) {
+            const startPos = camera.position.clone();
+            const startTarget = controls.target.clone();
+            const duration = 1200;
+            const startTime = Date.now();
+
+            function update() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(elapsed / duration, 1);
+                const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                camera.position.lerpVectors(startPos, targetPos, ease);
+                controls.target.lerpVectors(startTarget, lookAt, ease);
+                controls.update();
+
+                if (t < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        // ---------- 动画循环 ----------
+        const clock = new THREE.Clock();
+
         function animate() {
             requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            const time = Date.now() * 0.001;
 
-            // 缓慢旋转
-            nodeGroup.rotation.z += 0.002;
+            if (isRunning) {
+                // 太阳自转
+                sun.rotation.y += delta * 0.1;
 
-            // 悬停检测
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(nodeGroup.children);
-            let found = null;
-            for (const intersect of intersects) {
-                if (intersect.object.userData.id && intersect.object.userData.id !== 'center') {
-                    found = intersect.object.userData.id;
-                    break;
-                }
+                // 行星公转与自转
+                planets.forEach((p) => {
+                    p.angle += delta * p.data.speed * speedMultipliers[p.data.name.toLowerCase()].rev * 0.5;
+                    p.group.rotation.y = p.angle;
+                    p.mesh.rotation.y += delta * p.data.rotationSpeed * speedMultipliers[p.data.name.toLowerCase()].rot;
+                });
             }
 
-            if (found !== hoveredNode) {
-                if (hoveredNode && nodes[hoveredNode]) {
-                    nodes[hoveredNode].scale.set(1, 1, 1);
-                }
-                if (found && nodes[found]) {
-                    nodes[found].scale.set(1.2, 1.2, 1.2);
-                }
-                hoveredNode = found;
-                renderer.domElement.style.cursor = found ? 'pointer' : 'default';
-            }
+            // 太阳光晕脉动
+            const pulse = 1 + Math.sin(time * 2) * 0.05;
+            glow.scale.set(pulse, pulse, pulse);
 
+            controls.update();
             renderer.render(scene, camera);
         }
 
         animate();
 
-        // 响应窗口大小
+        // ---------- 响应式 ----------
         window.addEventListener('resize', () => {
-            if (window.innerWidth > 1200) {
-                renderer.setSize(400, window.innerHeight);
-                camera.aspect = 400 / window.innerHeight;
-            } else {
-                renderer.setSize(vizContainer.clientWidth, vizContainer.clientHeight);
-                camera.aspect = vizContainer.clientWidth / vizContainer.clientHeight;
-            }
+            const width = vizContainer.clientWidth;
+            const height = vizContainer.clientHeight;
+            camera.aspect = width / height;
             camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
         });
+
+        // 初始触发一次 resize
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
     </script>
 </body>
 </html>
