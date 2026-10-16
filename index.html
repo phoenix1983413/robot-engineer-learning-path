@@ -542,6 +542,7 @@
             <li class="toc-item"><a href="#module-07" class="toc-link">07 多机器人实战</a></li>
             <li class="toc-item"><a href="#module-08" class="toc-link">08 端侧模型部署</a></li>
             <li class="toc-item"><a href="#module-09" class="toc-link">09 云端模型部署</a></li>
+            <li class="toc-item"><a href="#module-10" class="toc-link">10 ROS2+大模型智能体+SLAM+视觉+机械臂</a></li>
             <li class="toc-item"><a href="#appendix" class="toc-link">附录：学习路线图</a></li>
         </ul>
     </nav>
@@ -1376,6 +1377,110 @@
             </div>
         </section>
 
+        <!-- Module 10 -->
+        <section id="module-10" class="module">
+            <div class="module-header">
+                <div class="module-number">10</div>
+                <div>
+                    <div class="module-title">ROS2 + 大模型智能体 + SLAM + 视觉 + 机械臂</div>
+                    <div class="module-subtitle">多技术融合的具身智能系统集成与实战</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">ROS2 与大模型智能体融合</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>ROS2 智能体架构</h4>
+                        <p>ROS2 节点作为智能体工具接口、Action/Service 封装大模型能力、生命周期管理与状态机</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>LLM 驱动的任务规划</h4>
+                        <p>大模型解析自然语言指令、生成 ROS2 行为序列、ReAct/Plan-Execute 循环、失败重规划</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>记忆与上下文管理</h4>
+                        <p>短期工作记忆（对话历史）、长期场景记忆（向量数据库）、RAG 检索历史经验</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>多模态感知输入</h4>
+                        <p>视觉描述（VLM）、语音指令（ASR）、环境状态（ROS2 topic）统一编码与融合</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">SLAM 与视觉感知增强</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>语义 SLAM</h4>
+                        <p>3D 场景语义标注、目标级地图（Object-level SLAM）、实例分割与位姿估计融合</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>NeRF / 高斯溅射</h4>
+                        <p>NeRF 场景重建、3D Gaussian Splatting 实时渲染、 embodied AI 场景理解</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>视觉语言模型（VLM）</h4>
+                        <p>GPT-4o / Gemini 多模态理解、场景描述生成、 affordance 感知（可交互区域识别）</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>开放词汇目标检测</h4>
+                        <p>OWL-ViT / GLIP 零样本检测、机器人目标库构建、动态目标跟踪</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">机械臂操作与操控</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>MoveIt 2 深入</h4>
+                        <p>运动规划（OMPL/CHOMP）、路径执行、轨迹执行器、碰撞检测、约束规划</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>抓取与操作</h4>
+                        <p>抓取位姿生成（GraspNet）、桌面/ bin-picking、灵巧手控制、力/位混合控制</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4> embodied VLA</h4>
+                        <p>RT-2 / PaLM-E 架构、动作token化、Sim2Real 迁移、机器人基础模型微调</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>双臂/人形协调</h4>
+                        <p>全身运动规划（WBC）、双手机器人操作、重心控制、步态-手臂协调</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">系统集成与实战案例</div>
+                <div class="knowledge-grid">
+                    <div class="knowledge-item">
+                        <h4>案例一：具身智能巡检机器人</h4>
+                        <p>ROS2 导航 + 语义 SLAM + VLM 场景理解 + 机械臂巡检操作 + 大模型决策</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>案例二：家庭服务机器人</h4>
+                        <p>自然语言指令解析 + 开放词汇目标识别 + 抓取操作 + 长期记忆 + 对话交互</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>案例三：工业柔性制造单元</h4>
+                        <p>多机器人协作 + 大模型调度 + 视觉引导装配 + 数字孪生仿真验证</p>
+                    </div>
+                    <div class="knowledge-item">
+                        <h4>案例四：人形机器人全栈系统</h4>
+                        <p>全身上下协调 + 大模型大脑 + 语义建图 + 具身推理 + 仿真到实物迁移</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 融合架构建议</h4>
+                <p>推荐采用"ROS2 中间件 + 大模型大脑 + 具身感知 + 运动执行"的四层架构。ROS2 负责实时控制与传感器总线；大模型负责任务理解、规划与推理；视觉/SLAM 提供环境语义理解；MoveIt2 + 硬件接口完成底层执行。各层通过标准 topic/service 解耦，便于替换和升级。</p>
+            </div>
+        </section>
+
         <!-- Appendix -->
         <section id="appendix" class="module">
             <div class="module-header">
@@ -1387,7 +1492,7 @@
             </div>
 
             <div class="learning-path">
-                <h3>🎯 推荐学习路径（总周期：18-24 个月）</h3>
+                <h3>🎯 推荐学习路径（总周期：24-30 个月）</h3>
                 <div class="path-steps" style="flex-direction: column; align-items: stretch; gap: 12px;">
                     <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #58a6ff;">
                         <strong style="color: #58a6ff;">第一阶段（0-6 个月）：基础筑基</strong>
@@ -1410,11 +1515,18 @@
                             目标：能交付完整的机器人产品级系统
                         </p>
                     </div>
-                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #f85149;">
-                        <strong style="color: #f85149;">第四阶段（18-24 个月）：智能化进阶</strong>
+                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #d29922;">
+                        <strong style="color: #d29922;">第四阶段（18-24 个月）：智能化进阶</strong>
                         <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
                             模块 08（端侧部署）+ 模块 09（云端部署）<br>
                             目标：具备具身智能与云边端协同开发能力
+                        </p>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #ff6b6b;">
+                        <strong style="color: #ff6b6b;">第五阶段（24-30 个月）：全栈融合</strong>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                            模块 10（ROS2+大模型智能体+SLAM+视觉+机械臂）<br>
+                            目标：能打造具备自主决策与操作能力的具身智能机器人系统
                         </p>
                     </div>
                 </div>
@@ -1568,6 +1680,7 @@
             { id: 'module-07', title: '07 多机实战', color: 0x3fb950 },
             { id: 'module-08', title: '08 端侧部署', color: 0xf85149 },
             { id: 'module-09', title: '09 云端部署', color: 0x58a6ff },
+            { id: 'module-10', title: '10 综合实战', color: 0xff6b6b },
             { id: 'appendix', title: '附录', color: 0x8b949e },
         ];
 
