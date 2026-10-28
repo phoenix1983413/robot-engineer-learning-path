@@ -543,6 +543,7 @@
             <li class="toc-item"><a href="#module-08" class="toc-link">08 端侧模型部署</a></li>
             <li class="toc-item"><a href="#module-09" class="toc-link">09 云端模型部署</a></li>
             <li class="toc-item"><a href="#module-10" class="toc-link">10 ROS2+大模型智能体+SLAM+视觉+机械臂</a></li>
+            <li class="toc-item"><a href="#case-waleung" class="toc-link">实战案例：瓦楞纸盒机器人</a></li>
             <li class="toc-item"><a href="#appendix" class="toc-link">附录：学习路线图</a></li>
         </ul>
     </nav>
@@ -1529,6 +1530,151 @@
                             目标：能打造具备自主决策与操作能力的具身智能机器人系统
                         </p>
                     </div>
+                </div>
+            </div>
+
+            </div>
+
+            <!-- 实战案例：瓦楞纸盒机器人 -->
+            <div class="module" id="case-waleung" style="margin-top: 48px;">
+                <div class="module-header">
+                    <div class="module-number">🧱</div>
+                    <div>
+                        <div class="module-title">实战案例：瓦楞（WaLeung）纸盒机器人</div>
+                        <div class="module-subtitle">低成本全栈入门项目 · 覆盖 01-09 模块核心知识点</div>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <h4>🎯 项目定位</h4>
+                    <p>「瓦楞」是一台以瓦楞纸板（corrugated cardboard）为主要结构材料、兼具基础运动控制与简单感知能力的入门级机器人。设计目标是：<strong>用最低的材料成本和加工成本，完整跑通"结构设计 → 电路搭建 → 传感器接入 → 运动控制 → 上位机/云端交互"的全链路</strong>。适合作为学习路径中的第一个综合实战项目，验证并串联模块 01-09 的基础能力。</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">一、所需知识清单</div>
+                    <div class="knowledge-grid">
+                        <div class="knowledge-item">
+                            <h4>机械结构设计</h4>
+                            <p>工程视图识图（三视图）、公差配合、连杆/舵机臂结构设计、承重分析与加强筋布置、纸板折叠结构设计（v-fold/lock-tab）、重心估算与稳定性校核</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>材料选用</h4>
+                            <p>瓦楞纸板规格（A/B/C/E 楞型）、厚度与承重关系、防水/防潮处理（丙烯酸清漆）、连接方式（胶枪/美工刀/定位销/螺栓强化）、重量与强度权衡</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>电子电路</h4>
+                            <p>面包板/洞洞板焊接、电源分配（LiPo 电池 → 5V/3.3V LDO/DC-DC）、电机驱动（L298N/DRV8833）、舵机供电隔离、保险丝与反向保护、线缆管理与应力消除</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>传感器应用</h4>
+                            <p>基础感知层：HC-SR04 超声波测距、MPU-6050 IMU（姿态/平衡）、红外循迹/避障、光电编码器测速；进阶可选：OpenMV 视觉循线、TOF 激光测距</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>控制编程</h4>
+                            <p>嵌入式端：Arduino C++（运动控制、PID 平衡、传感器融合）；上位机端：Python（FastAPI/Flask 接收传感器数据、下发控制指令）；ROS2 可选（rclcpp + URDF 建模仿真）</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>通信与云端</h4>
+                            <p>蓝牙/BLE 手机遥控（可选）、WiFi 图传/数据上报（ESP32）、MQTT 主题设计、云端日志存储与可视化（InfluxDB + Grafana 可选）</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>仿真与建模（可选进阶）</h4>
+                            <p>SolidWorks/Fusion 360 做 3D 结构建模、Gazebo + ROS2 做运动仿真、Adams/Webots 做纸板柔性体近似仿真</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">二、从设计到组装的全流程实战步骤</div>
+                    <div class="path-steps" style="flex-direction: column; align-items: stretch; gap: 12px;">
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #58a6ff;">
+                            <strong style="color: #58a6ff;">Step 1：需求定义与指标分解</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">确定形态（两轮平衡车 / 四轮差速 / 六足仿生）、尺寸上限（如 20×20×20 cm）、续航目标（&gt;30 min）、载重能力（&gt;0.5 kg）、交互方式（遥控/自主巡线）。输出《需求规格书》与《指标分解表》。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #bc8cff;">
+                            <strong style="color: #bc8cff;">Step 2：概念设计与选型</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">手绘草图 → 选定驱动方式（直流有刷电机 + 编码器 / 舵机关节）→ 选定主控（Arduino Uno / ESP32 / STM32）→ 传感器清单 → 电池容量估算（Ah 计算）→ 结构形式确定（纸板层数、楞向、折叠节点）。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #3fb950;">
+                            <strong style="color: #3fb950;">Step 3：详细设计与出图</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">使用 CAD（Fusion 360 / SolidWorks 或 Illustrator/Inkscape）绘制可展开图（flat pattern），标注折痕线、切口、加强片位置。必要时做有限元/手算校核（弯曲应力、剪切力）。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #d29922;">
+                            <strong style="color: #d29922;">Step 4：材料准备与加工</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">采购 A/B 楞瓦楞纸板（推荐 3-5 mm 厚度）、美工刀、切割垫板、热熔胶枪、502 局部加固、螺栓/M3 螺母、铜柱（主板堆叠）、线槽/扎带。按展开图切割、折痕压线、预组装 Dry Fit。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #f78166;">
+                            <strong style="color: #f78166;">Step 5：电路搭建与调试</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">按原理图焊接/搭接电路：主控 → 电机驱动 → 电机/编码器；主控 → IMU（I2C）；主控 → 超声波/红外（GPIO）；电源模块独立布局。上电前用万用表测通断/短路，分模块点亮测试。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #f85149;">
+                            <strong style="color: #f85149;">Step 6：固件开发与传感器融合</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">Arduino/PlatformIO 环境编写：电机 PWM 控制、编码器速度读取、MPU-6050 姿态解算（互补滤波/EKF）、超声波避障、红外循迹 PID。先单模块调通，再集成到状态机。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #58a6ff;">
+                            <strong style="color: #58a6ff;">Step 7：机械装配与结构加固</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">将电路板、电池、传感器固定到纸板结构上；关键受力点用铜柱、胶水 + 螺栓双重固定；线缆走线规划，避免与运动件干涉；重心调整（电池位置微调）确保静态/动态平衡。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #bc8cff;">
+                            <strong style="color: #bc8cff;">Step 8：联调与功能验证</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">逐功能验证：电机正反转、编码器反馈精度、IMU 姿态漂移、传感器触发距离；整机功能：遥控前进/后退/转向、巡线跟踪、障碍物停车、蓝牙/WiFi 数据回传。记录 Bug 清单并迭代。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #3fb950;">
+                            <strong style="color: #3fb950;">Step 9：上位机/云端集成（可选进阶）</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">Python 上位机通过串口/WiFi 接收机器人遥测数据（速度、姿态、电池电压），绘制实时曲线；通过 Web 界面发送控制指令；MQTT 上报状态到云端；可选接入 Grafana 做历史趋势分析。</p>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; border-left: 4px solid #d29922;">
+                            <strong style="color: #d29922;">Step 10：文档、迭代与展示</strong>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">整理 BOM 表、原理图、3D 展开图、接线图、固件源码；写 README + 制作 1-2 分钟演示视频；复盘哪些结构设计不合理、哪些传感器选型失误，输出《经验教训总结》。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">三、与学习路径模块的知识点映射</div>
+                    <div class="knowledge-grid">
+                        <div class="knowledge-item">
+                            <h4>模块 01 · 软硬件基础</h4>
+                            <p>电路理论（欧姆定律计算电池放电）、机械制图（展开图绘制）、版本控制（Git 管理固件与结构图）</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 02 · 单片机核心</h4>
+                            <p>主控选型（Arduino/ESP32/STM32）、GPIO/PWM/ADC/I2C 外设使用、中断与定时器配置</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 03 · 动力与底盘</h4>
+                            <p>直流电机/减速比选型、编码器测速、差速/阿克曼底盘 kinematics、IMU 姿态反馈</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 04 · 上位机开发</h4>
+                            <p>Python 串口通信、FastAPI 做控制接口、实时数据可视化（Matplotlib/Chart.js）</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 05 · 语音对话系统</h4>
+                            <p>可选：集成语音指令（ASR）控制机器人动作，或 TTS 播报状态</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 06 · ROS2 核心</h4>
+                            <p>可选：为机器人建立 URDF 模型，在 Gazebo 中做仿真验证导航/避障</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 07 · 多机器人实战</h4>
+                            <p>多做一台，做简单的多机协同（编队/主从）或局域网通信</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 08 · 端侧模型部署</h4>
+                            <p>可选：在 ESP32/Jetson Nano 上跑轻量模型（颜色识别/人脸检测），替代固定阈值算法</p>
+                        </div>
+                        <div class="knowledge-item">
+                            <h4>模块 09 · 云端模型部署</h4>
+                            <p>MQTT/HTTP 上报传感器数据到云端，用 LLM 做简单任务理解（"去厨房"→ 路径规划意图）</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tip-box" style="margin-top: 32px;">
+                    <h4>💡 为什么「瓦楞」适合作为第一个综合实战</h4>
+                    <p><strong>材料成本极低</strong>：纸板免费/几元，加工工具（美工刀、胶枪）家家户户都有；<strong>容错率高</strong>：设计失误直接换板重来，不会心疼；<strong>知识覆盖全</strong>：从机械、电子、传感器、控制到上位机，一站打穿；<strong>可展示性强</strong>：适合拍视频、写博客、放进简历作品集。建议学习路径进行到"模块 03 + 模块 06"后启动此项目，总耗时约 2-4 周。</p>
                 </div>
             </div>
 
